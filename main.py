@@ -1,4 +1,4 @@
-import ftplib, telnetlib, time
+import ftplib, telnetlib, time, ipaddress
 from router_template import template
 
 host = '192.168.88.1'
@@ -6,9 +6,12 @@ user = 'admin'
 password = ''
 port = '23'  # port for telnet connection
 
-wanip = input("Set WAN IP address in the format 'x.x.x.x'\nif WAN IP address is unknown, please enter 'n':  ")
-if wanip == 'n':
-    wanip = '5.5.5.5'
+while True:
+    try:
+        wanip = ipaddress.ip_address(input("Set WAN IP address\nif WAN IP address is unknown, please enter 1.1.1.1:  "))
+        break
+    except ValueError:
+        print('Wrong value')
 subnet = int(input("Set local subnet (third octet of local IP): "))
 while not int(0 < subnet < 255):
     print('Wrong value!')

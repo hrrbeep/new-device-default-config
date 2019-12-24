@@ -4,7 +4,7 @@ from router_template import template
 host = '192.168.88.1'
 user = 'admin'
 password = ''
-port = '23'
+port = '23'  # port for telnet connection
 
 wanip = input("Set WAN IP address in the format 'x.x.x.x'\nif WAN IP address is unknown, please enter 'n':  ")
 if wanip == 'n':
@@ -19,8 +19,8 @@ filename = identity + '.rsc'
 
 with open(filename, 'w') as f:
     f.write(template.render(d))
-print('Connecting to router by FTP...')
-try:
+try:  # ftp connection
+    print('Connecting to router by FTP...')
     ftpcon = ftplib.FTP(host, user, password)
     f = open(filename, 'rb')
     send = ftpcon.storbinary('STOR ' + filename, f)
@@ -30,7 +30,7 @@ try:
 except WindowsError:
     print('Failed to connect to the router by FTP')
 print('Connecting to router by Telnet...')
-try:
+try:  # telnet connection
     command1 = 'system reset-configuration no-defaults=yes skip-backup=yes run-after-reset=' + filename
     command2 = 'yes'
     tn = telnetlib.Telnet(host, port)

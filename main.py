@@ -38,8 +38,6 @@ while True:
         print('FTP connection was failed')
         input('Check connection to the router and press Enter')
 
-print('Connecting to router...')
-
 try:  # telnet connection
     command1 = 'system reset-configuration no-defaults=yes skip-backup=yes run-after-reset=' + filename
     command2 = 'yes'
@@ -52,7 +50,6 @@ try:  # telnet connection
     tn.write(command1.encode('UTF-8') + b"\r\n")
     time.sleep(2)
     tn.write(command2.encode('UTF-8') + b"\r\n")
-    print('ok')
     print('********************************************\n'
           'The router will be restarted and configured!\n'
           'Please wait for signal\n'

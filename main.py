@@ -1,6 +1,7 @@
 import ftplib, telnetlib, time, ipaddress
 from router_template import template
 
+
 host = '192.168.88.1'
 user = 'admin'
 password = ''
@@ -12,27 +13,33 @@ while True:
         break
     except ValueError:
         print('Wrong value')
-subnet = int(input("Set local subnet (third octet of local IP): "))
+subnet = int(input("Set local subnet: "))
 while not int(0 < subnet < 255):
     print('Wrong value!')
-    subnet = int(input("Set local subnet (third octet of local IP): "))
+    subnet = int(input("Set local subnet: "))
 identity = input("Set router identity: ")
 d = {'subnet': subnet, 'wanip': wanip, 'identity': identity}
 filename = identity + '.rsc'
 
 with open(filename, 'w') as f:
     f.write(template.render(d))
-try:  # ftp connection
-    print('Connecting to router by FTP...')
-    ftpcon = ftplib.FTP(host, user, password)
-    f = open(filename, 'rb')
-    send = ftpcon.storbinary('STOR ' + filename, f)
-    print('ok')
-    print('Sending configuration to device...')
-    ftpcon.close()
-except WindowsError:
-    print('Failed to connect to the router by FTP')
-print('Connecting to router by Telnet...')
+
+while True:
+    try:  # ftp connection
+        print('Connecting to router...')
+        ftpcon = ftplib.FTP(host, user, password)
+        f = open(filename, 'rb')
+        send = ftpcon.storbinary('STOR ' + filename, f)
+        print('ok')
+        print('Sending configuration to device...')
+        ftpcon.close()
+        break
+    except WindowsError:
+        print('FTP connection was failed')
+        input('Check connection to the router and press Enter')
+
+print('Connecting to router...')
+
 try:  # telnet connection
     command1 = 'system reset-configuration no-defaults=yes skip-backup=yes run-after-reset=' + filename
     command2 = 'yes'
@@ -48,8 +55,8 @@ try:  # telnet connection
     print('ok')
     print('********************************************\n'
           'The router will be restarted and configured!\n'
-          'Please wait for Mario theme :)\n'
+          'Please wait for signal\n'
           '********************************************')
     input('Press Enter to exit')
 except WindowsError:
-    print('Failed to connect to the router by Telnet')
+    print('Telnet connection was failed')
